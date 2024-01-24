@@ -40,7 +40,7 @@ def doc_preprocessing():
 def embedding_db():
     embeddings = OpenAIEmbeddings()
     
-    #import pinecone
+    import pinecone
 
     pinecone.init(
         api_key =PINECONE_API_KEY,
