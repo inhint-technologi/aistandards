@@ -56,8 +56,7 @@ def embedding_db():
     return doc_db
 
 # note: these 2 lines are not strictly necessary, just testing client connection
-#pc_index = pinecone.Index('aichatstandard')
-#pc_index.describe_index_stats() 
+
 
 llm = ChatOpenAI()
 doc_db = embedding_db()
