@@ -52,28 +52,9 @@ def embedding_db():
 llm = ChatOpenAI()
 doc_db = embedding_db()
 
-def translate_text(text, target_language):
-    prompt = f"Translate the following Norwegian text to {target_language}: {text}"
-    response = openai.Completion.create(
-        engine="gpt-3.5-turbo-instruct",
-        prompt=prompt,
-        #messages=[{"role": "system", "content": "You are a helpful assistant that translates Norwegian to English."},
-        #          {"role": "user", "content": f"Translate the following Norwegian text to {target_language}: {text}"}],
-        max_tokens=150,
-        temperature=0.5,
-        n=1,
-        top_p=1.0,
-        frequency_penalty=0.0,
-        presence_penalty=0.0,
-    )
-
-    translated_text = response.choices[0].text.strip()
-    return translated_text
-
 def retrieval_answer(query, retriever):
     llm = ChatOpenAI()
-    #llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo-0613", max_tokens=1000)
-
+    
     qa = RetrievalQA.from_chain_type(llm=llm, chain_type='stuff', retriever=retriever)
     result = qa.run(query)
     return result
@@ -85,9 +66,6 @@ def main():
         if len(text_input)>0:
             st.info("Ditt spørsmål: " + text_input)
             retriever = doc_db.as_retriever()
-                      
-            result3 = translate_text(text_input, "english") 
-    
             answer = retrieval_answer(text_input, retriever)
             st.success(answer)
 if __name__ == "__main__":
