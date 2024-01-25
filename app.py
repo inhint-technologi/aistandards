@@ -1,7 +1,7 @@
 from langchain.document_loaders import DirectoryLoader
 from langchain.text_splitter import CharacterTextSplitter
 import os
-#import pinecone
+import pinecone
 import openai
 from langchain.vectorstores import Pinecone
 from langchain.embeddings.openai import OpenAIEmbeddings
@@ -20,7 +20,11 @@ PINECONE_ENV = os.getenv('PINECONE_ENV')
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
+pc = Pinecone( api_key=os.getenv("PINECONE_API_KEY") )
+
 os.environ['OPENAI_API_KEY'] = OPENAI_API_KEY
+os.environ['PINECONE_API_KEY'] = PINECONE_API_KEY
+
 
 def doc_preprocessing():
     loader = DirectoryLoader(
@@ -40,7 +44,7 @@ def doc_preprocessing():
 def embedding_db():
     embeddings = OpenAIEmbeddings()
     
-    import pinecone
+    #import pinecone
 
     pinecone.init(
         api_key =PINECONE_API_KEY,
@@ -95,14 +99,10 @@ def main():
         if len(text_input)>0:
             st.info("Your query: " + text_input)
             retriever = doc_db.as_retriever()
-            
-            # translat from Norwegian to English
-            #qa_translator = DoctranTextTranslator(language="english") 
-            #documents = [Document(page_content=text_input)]
-            #result2 = qa_translator.transform_documents(documents)
+                      
             result3 = translate_text(text_input, "english") 
     
-            answer = retrieval_answer(result3, retriever)
+            answer = retrieval_answer(text_input, retriever)
             st.success(answer)
 if __name__ == "__main__":
     main()
