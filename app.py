@@ -1,7 +1,7 @@
 from langchain.document_loaders import DirectoryLoader
 from langchain.text_splitter import CharacterTextSplitter
 import os
-#import pinecone
+import pinecone
 import openai
 from langchain.vectorstores import Pinecone
 from langchain.embeddings.openai import OpenAIEmbeddings
@@ -55,8 +55,6 @@ def embedding_db():
     return doc_db
 
 # note: these 2 lines are not strictly necessary, just testing client connection
-#pc_index = pinecone.Index('aichatstandard')
-#pc_index.describe_index_stats() 
 
 llm = ChatOpenAI()
 doc_db = embedding_db()
