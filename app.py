@@ -1,27 +1,22 @@
 from langchain.document_loaders import DirectoryLoader
 from langchain.text_splitter import CharacterTextSplitter
 import os
-from pinecone import Pinecone
 import openai
+import pinecone
 from langchain.vectorstores import Pinecone
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.chains import RetrievalQA
 from langchain.chat_models import ChatOpenAI
-#from langchain.llms import openai
 import streamlit as st 
 from langchain.schema import Document
-from langchain_community.document_transformers import DoctranTextTranslator
 from dotenv import load_dotenv
 
 load_dotenv()
 
 PINECONE_API_KEY = os.getenv('PINECONE_API_KEY')
-PINECONE_ENV = os.getenv('PINECONE_ENV')
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
-openai.api_key = os.getenv("OPENAI_API_KEY")
-
+openai.api_key = OPENAI_API_KEY
 os.environ['OPENAI_API_KEY'] = OPENAI_API_KEY
-pc = Pinecone(api_key=PINECONE_API_KEY)
 
 def doc_preprocessing():
     loader = DirectoryLoader(
@@ -40,13 +35,12 @@ def doc_preprocessing():
 @st.cache_resource
 def embedding_db():
     embeddings = OpenAIEmbeddings()
-    
-    #import pinecone
 
-    Pinecone.init(
-        api_key =PINECONE_API_KEY,
-        environment=PINECONE_ENV
-    )
+    pinecone.init(api_key=PINECONE_API_KEY, environment='gcp-starter')
+    index_name ='aichatstandard'
+    dimension=1536
+    metric='cosine'
+
     docs_split = doc_preprocessing()
     doc_db = Pinecone.from_documents(
         docs_split,
@@ -55,12 +49,8 @@ def embedding_db():
     )
     return doc_db
 
-# note: these 2 lines are not strictly necessary, just testing client connection
-
-
 llm = ChatOpenAI()
 doc_db = embedding_db()
-#result =""
 
 def translate_text(text, target_language):
     prompt = f"Translate the following Norwegian text to {target_language}: {text}"
@@ -89,11 +79,11 @@ def retrieval_answer(query, retriever):
     return result
 
 def main():
-    st.title("Question and Answering App powered by LLM and Pinecone")
-    text_input = st.text_input("Ask your Query...")
-    if st.button("Ask Query"):
+    st.title("AI Web App Spørsmål og svar drevet av LLM og Pinecone")
+    text_input = st.text_input("Formuler ditt spørsmål...")
+    if st.button("Send forespørsel"):
         if len(text_input)>0:
-            st.info("Your query: " + text_input)
+            st.info("Ditt spørsmål: " + text_input)
             retriever = doc_db.as_retriever()
                       
             result3 = translate_text(text_input, "english") 
