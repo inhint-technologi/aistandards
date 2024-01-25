@@ -20,10 +20,7 @@ PINECONE_ENV = os.getenv('PINECONE_ENV')
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-pc = Pinecone( api_key=os.getenv("PINECONE_API_KEY") )
-
 os.environ['OPENAI_API_KEY'] = OPENAI_API_KEY
-os.environ['PINECONE_API_KEY'] = PINECONE_API_KEY
 
 
 def doc_preprocessing():
@@ -44,7 +41,7 @@ def doc_preprocessing():
 def embedding_db():
     embeddings = OpenAIEmbeddings()
     
-    #import pinecone
+    import pinecone
 
     pinecone.init(
         api_key =PINECONE_API_KEY,
@@ -59,12 +56,10 @@ def embedding_db():
     return doc_db
 
 # note: these 2 lines are not strictly necessary, just testing client connection
-#pc_index = pinecone.Index('aichatstandard')
-#pc_index.describe_index_stats() 
+
 
 llm = ChatOpenAI()
 doc_db = embedding_db()
-#result =""
 
 def translate_text(text, target_language):
     prompt = f"Translate the following Norwegian text to {target_language}: {text}"
