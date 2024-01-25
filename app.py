@@ -2,7 +2,7 @@ from langchain.document_loaders import DirectoryLoader
 from langchain.text_splitter import CharacterTextSplitter
 import os
 import openai
-import pinecone
+from pinecone import Pinecone, ServerlessSpec
 from langchain.vectorstores import Pinecone
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.chains import RetrievalQA
@@ -36,7 +36,7 @@ def doc_preprocessing():
 def embedding_db():
     embeddings = OpenAIEmbeddings()
 
-    pinecone.init(api_key=PINECONE_API_KEY, environment='gcp-starter')
+    pc= Pinecone(api_key=PINECONE_API_KEY, environment='gcp-starter')
     index_name ='aichatstandard'
     dimension=1536
     metric='cosine'
