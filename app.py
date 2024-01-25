@@ -1,7 +1,7 @@
 from langchain.document_loaders import DirectoryLoader
 from langchain.text_splitter import CharacterTextSplitter
 import os
-import pinecone
+#import pinecone
 import openai
 from langchain.vectorstores import Pinecone
 from langchain.embeddings.openai import OpenAIEmbeddings
@@ -21,7 +21,7 @@ OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 os.environ['OPENAI_API_KEY'] = OPENAI_API_KEY
-pc = Pinecone( api_key=os.environ.get("PINECONE_API_KEY") )
+os.environ['PINECONE_API_KEY'] = PINECONE_API_KEY
 
 def doc_preprocessing():
     loader = DirectoryLoader(
@@ -41,9 +41,9 @@ def doc_preprocessing():
 def embedding_db():
     embeddings = OpenAIEmbeddings()
     
-    #import pinecone
+    import pinecone
 
-    Pinecone.init(
+    pinecone.init(
         api_key =PINECONE_API_KEY,
         environment=PINECONE_ENV
     )
