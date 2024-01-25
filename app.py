@@ -1,17 +1,16 @@
 from langchain.document_loaders import DirectoryLoader
 from langchain.text_splitter import CharacterTextSplitter
-import os
-#import pinecone
-import openai
 from langchain.vectorstores import Pinecone
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.chains import RetrievalQA
 from langchain.chat_models import ChatOpenAI
-#from langchain.llms import openai
 import streamlit as st 
 from langchain.schema import Document
 from langchain_community.document_transformers import DoctranTextTranslator
 from dotenv import load_dotenv
+import os
+import pinecone
+import openai
 
 load_dotenv()
 
@@ -40,7 +39,7 @@ def doc_preprocessing():
 def embedding_db():
     embeddings = OpenAIEmbeddings()
     
-    import pinecone
+    #import pinecone
 
     pinecone.init(
         api_key =PINECONE_API_KEY,
