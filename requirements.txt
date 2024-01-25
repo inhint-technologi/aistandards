@@ -7,4 +7,3 @@ tabulate
 pdf2image
 streamlit
 tiktoken
-pinecone
