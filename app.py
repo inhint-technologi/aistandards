@@ -1,16 +1,17 @@
 from langchain.document_loaders import DirectoryLoader
 from langchain.text_splitter import CharacterTextSplitter
+import os
+import pinecone
+import openai
 from langchain.vectorstores import Pinecone
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.chains import RetrievalQA
 from langchain.chat_models import ChatOpenAI
+#from langchain.llms import openai
 import streamlit as st 
 from langchain.schema import Document
 from langchain_community.document_transformers import DoctranTextTranslator
 from dotenv import load_dotenv
-import os
-import pinecone
-import openai
 
 load_dotenv()
 
@@ -54,6 +55,8 @@ def embedding_db():
     return doc_db
 
 # note: these 2 lines are not strictly necessary, just testing client connection
+#pc_index = pinecone.Index('aichatstandard')
+#pc_index.describe_index_stats() 
 
 llm = ChatOpenAI()
 doc_db = embedding_db()
@@ -92,14 +95,10 @@ def main():
         if len(text_input)>0:
             st.info("Your query: " + text_input)
             retriever = doc_db.as_retriever()
-            
-            # translat from Norwegian to English
-            #qa_translator = DoctranTextTranslator(language="english") 
-            #documents = [Document(page_content=text_input)]
-            #result2 = qa_translator.transform_documents(documents)
+                      
             result3 = translate_text(text_input, "english") 
     
-            answer = retrieval_answer(result3, retriever)
+            answer = retrieval_answer(text_input, retriever)
             st.success(answer)
 if __name__ == "__main__":
     main()
