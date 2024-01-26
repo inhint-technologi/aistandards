@@ -2,7 +2,7 @@ from langchain.document_loaders import DirectoryLoader
 from langchain.text_splitter import CharacterTextSplitter
 import os
 import openai
-from pinecone import Pinecone, ServerlessSpec
+from pinecone import ServerlessSpec, PodSpec
 from langchain.vectorstores import Pinecone
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.chains import RetrievalQA
@@ -32,20 +32,35 @@ def doc_preprocessing():
     docs_split = text_splitter.split_documents(docs)
     return docs_split
 
+# initialize connection to pinecone (get API key at app.pc.io)
+api_key = os.environ.get('PINECONE_API_KEY') or 'PINECONE_API_KEY'
+environment = os.environ.get('PINECONE_ENVIRONMENT') or 'PINECONE_ENVIRONMENT'
+
+# configure client
+pc = Pinecone(api_key=api_key)
+index_name = 'aichatstandard' 
+use_serverless = True
+
+
+if use_serverless:
+    cloud = os.environ.get('PINECONE_CLOUD') or 'PINECONE_CLOUD'
+    spec = ServerlessSpec(cloud='aws', region='us-west-2')
+else:
+    spec = PodSpec(environment=environment)
+
 @st.cache_resource
 def embedding_db():
     embeddings = OpenAIEmbeddings()
 
-    pc= Pinecone(api_key=PINECONE_API_KEY, environment='gcp-starter')
-    index_name ='aichatstandard'
-    dimension=1536
-    metric='cosine'
+    pc = Pinecone(api_key=api_key)
+    index_name = 'aichatstandard' 
+    use_serverless = True
 
     docs_split = doc_preprocessing()
     doc_db = Pinecone.from_documents(
         docs_split,
         embeddings,
-        index_name ='aichatstandard'
+        index_name = index_name
     )
     return doc_db
 
